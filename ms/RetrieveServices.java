@@ -79,6 +79,8 @@ public class RetrieveServices extends UnicastRemoteObject implements RetrieveSer
         Statement stmt = null;		// A Statement object is an interface that represents a SQL statement.
         String ReturnString = "[";	// Return string. If everything works you get an ordered pair of data
         							// if not you get an error string
+
+        System.out.println("Retrieving all orders");
         try
         {
             // Here we load and initialize the JDBC connector. Essentially a static class

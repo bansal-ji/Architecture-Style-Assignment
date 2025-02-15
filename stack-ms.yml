@@ -17,6 +17,24 @@ services:
     networks:
       - ms
 
+  login:
+    image: ms_login
+    container_name: ms_login
+    build:
+      context: .
+      dockerfile: Dockerfile-ls
+      args:
+        MYSQL_PASSWORD: foo
+    depends_on:
+      - mysql
+    environment:
+      RMI_REMOTE_HOST: ms_login
+      RMI_REMOTE_PORT: 1100
+      MYSQL_REMOTE_HOST: ms_mysql
+      MYSQL_REMOTE_PORT: 3306
+    networks:
+      - ms
+
   retrieve:
     image: ms_retrieve
     container_name: ms_retrieve

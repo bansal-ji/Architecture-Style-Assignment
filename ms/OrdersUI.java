@@ -45,6 +45,37 @@ public class OrdersUI
 		LocalDate localDate = null;					// Date object
 		MSClientAPI api = new MSClientAPI();	// RESTful api object
 
+        // ========================================================
+        // NEW LOGIN PROMPT SECTION: Require user login before any order operations.
+        // ========================================================
+        boolean authenticated = false;
+        while (!authenticated) {
+            System.out.println("\n\nPlease log in before accessing the order services.");
+            System.out.print("Enter username: ");
+            String username = keyboard.nextLine();
+            System.out.print("Enter password: ");
+            String password = keyboard.nextLine();
+
+            try {
+                // Call the login service via MSClientAPI. This method must be added to MSClientAPI.
+                response = api.login(username, password);
+                if (response.equals("Login Successful")) {
+                    authenticated = true;
+                    System.out.println("Login successful! Welcome, " + username + "!");
+                } else {
+                    System.out.println("Login failed: " + response);
+                }
+            } catch (Exception e) {
+                System.out.println("Login failed due to exception: " + e);
+            }
+            if (!authenticated) {
+                System.out.println("Please try logging in again.\n");
+            }
+        }
+        // ========================================================
+        // END LOGIN PROMPT SECTION
+        // ========================================================
+
 		/////////////////////////////////////////////////////////////////////////////////
 		// Main UI loop
 		/////////////////////////////////////////////////////////////////////////////////

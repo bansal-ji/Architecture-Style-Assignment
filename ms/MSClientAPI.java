@@ -106,4 +106,20 @@ public class MSClientAPI
            return(response);	
     }
 
+	/********************************************************************************
+	 * Description: Logs in the user with the provided username and password
+	 * Parameters: username - the username of the user
+	 * 		   	   password - the password of the user
+	 * Returns: String that contains the status of the login operation
+	 * *****************************************************************************/
+
+	public String login(String username, String password) throws Exception {
+		// Get the registry entry for LoginServices from the registry.properties file.
+		String entry = registry.getProperty("LoginServices");
+		String host = entry.split(":")[0];
+		String port = entry.split(":")[1];
+		Registry reg = LocateRegistry.getRegistry(host, Integer.parseInt(port));
+		LoginServicesAI loginService = (LoginServicesAI) reg.lookup("LoginServices");
+		return loginService.login(username, password);
+	}	
 }

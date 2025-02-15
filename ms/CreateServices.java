@@ -74,6 +74,7 @@ public class CreateServices extends UnicastRemoteObject implements CreateService
 
     public String newOrder(String idate, String ifirst, String ilast, String iaddress, String iphone) throws RemoteException
     {
+        System.out.println("Creating new order");
       	// Local declarations
 
         Connection conn = null;		                 // connection to the orderinfo database

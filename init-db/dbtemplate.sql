@@ -52,3 +52,15 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2018-02-16 17:26:40
+
+
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL
+);
+INSERT INTO users(username, password) VALUES ('loginuser', 'password');
+INSERT INTO users(username, password) VALUES ('loginuser1', 'password');
+INSERT INTO users(username, password) VALUES ('loginuser2', 'password');
+INSERT INTO users(username, password) VALUES ('loginuser3', 'password');
+INSERT INTO users(username, password) VALUES ('loginuser4', 'password');
