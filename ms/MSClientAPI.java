@@ -106,4 +106,20 @@ public class MSClientAPI
            return(response);	
     }
 
+	public String deleteOrder(String orderId) throws Exception
+{
+    // Get the registry entry for DeleteServices
+    String entry = registry.getProperty("DeleteServices");
+    String host = entry.split(":")[0];
+    String port = entry.split(":")[1];
+
+    // Get the RMI registry
+    Registry reg = LocateRegistry.getRegistry(host, Integer.parseInt(port));
+    DeleteServicesAI obj = (DeleteServicesAI) reg.lookup("DeleteServices");
+    
+    boolean success = obj.deleteOrder(Integer.parseInt(orderId));
+    
+    return success ? "Order deleted successfully." : "Failed to delete order.";
+}
+
 }

@@ -59,6 +59,25 @@ public interface Configuration {
 		return Integer.valueOf(port);
 	}
 
+    // Add Delete Service Configuration
+	static String getDeleteServiceHost() {
+		final String key = "DELETE_SERVICE_HOST";
+		final String host = System.getenv(key);
+
+		if (host == null) throw new IllegalStateException(String.format("env var [%s] is not set", key));
+
+		return host;
+	}
+
+	static int getDeleteServicePort() {
+		final String key = "DELETE_SERVICE_PORT";
+		final String port = System.getenv(key);
+
+		if (port == null) throw new IllegalStateException(String.format("env var [%s] is not set", key));
+
+		return Integer.valueOf(port);
+	}
+
 	static String getJDBCConnection() {
 		return "jdbc:mysql://" + getMySqlHost() + ":" + getMySqlPort() + "/ms_orderinfo?autoReconnect=true&useSSL=false";
 	}

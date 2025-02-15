@@ -1,0 +1,22 @@
+# Use OpenJDK as the base image
+FROM openjdk:16
+ARG MYSQL_PASSWORD
+
+# Set the working directory
+WORKDIR /usr/app
+
+# Copy MySQL Connector library
+COPY ms/mysql-connector-java-5.1.45-bin.jar lib/
+ENV CLASSPATH=.:lib/mysql-connector-java-5.1.45-bin.jar:${CLASSPATH}
+
+# Copy and configure Configuration.java
+COPY ms/Configuration-tmplt.java ./
+RUN sed "s/<PASSWORD>/${MYSQL_PASSWORD}/g" < Configuration-tmplt.java > Configuration.java
+RUN rm Configuration-tmplt.java
+
+# Copy Delete Service source code
+COPY ms/DeleteServices.java ms/DeleteServicesAI.java ./
+RUN javac *.java
+
+# Start the Delete Service
+CMD java DeleteServices
