@@ -129,6 +129,10 @@ public class RetrieveServices extends UnicastRemoteObject implements RetrieveSer
 
             ReturnString = ReturnString +"]";
 
+            System.out.println("Getting all orders: " + ReturnString);
+
+            ServerLogger.info("Retrieved Order Successfully: " + ReturnString);
+
             //Clean-up environment
 
             rs.close();
@@ -140,6 +144,7 @@ public class RetrieveServices extends UnicastRemoteObject implements RetrieveSer
         } catch(Exception e) {
 
             ReturnString = e.toString();
+            ServerLogger.error("Retrieving Orders Failed: " + ReturnString);
         } 
         
         return(ReturnString);
@@ -209,6 +214,8 @@ public class RetrieveServices extends UnicastRemoteObject implements RetrieveSer
 
             ReturnString = ReturnString +"]";
 
+            ServerLogger.info("Retrieved Order Successfully: " + ReturnString);
+
             //Clean-up environment
 
             rs.close();
@@ -220,9 +227,9 @@ public class RetrieveServices extends UnicastRemoteObject implements RetrieveSer
         } catch(Exception e) {
 
             ReturnString = e.toString();
-
+            ServerLogger.error("Retrieving Orders Failed: " + ReturnString);
         } 
-
+        System.out.println("Retrieve done");
         return(ReturnString);
 
     } //retrieve order by id

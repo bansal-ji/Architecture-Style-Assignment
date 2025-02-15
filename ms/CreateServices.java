@@ -104,6 +104,8 @@ public class CreateServices extends UnicastRemoteObject implements CreateService
 
             stmt.executeUpdate(sql);
 
+            ServerLogger.info("Created new entry Successfully!");
+
             // clean up the environment
 
             stmt.close();
@@ -114,6 +116,7 @@ public class CreateServices extends UnicastRemoteObject implements CreateService
         } catch(Exception e) {
 
             ReturnString = e.toString();
+            ServerLogger.error("Failed to create new entry: " + ReturnString);
         } 
         
         return(ReturnString);
