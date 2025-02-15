@@ -45,6 +45,7 @@ public class OrdersUI
 		LocalDate localDate = null;					// Date object
 		MSClientAPI api = new MSClientAPI();	// RESTful api object
 
+
 		/////////////////////////////////////////////////////////////////////////////////
 		// Main UI loop
 		/////////////////////////////////////////////////////////////////////////////////
@@ -66,20 +67,23 @@ public class OrdersUI
 									// through the next call to nextLine()
 
 			//////////// option 1 ////////////
-
+			
 			if ( option == '1' )
 			{
 				// Here we retrieve all the orders in the ms_orderinfo database
 
 				System.out.println( "\nRetrieving All Orders::" );
+				System.out.println( "Logging started");
 				try
 				{
 					response = api.retrieveOrders();
 					System.out.println(response);
+					Logger.info(response);
 
 				} catch (Exception e) {
 
 					System.out.println("Request failed:: " + e);
+					Logger.error("Request failed:: " + e);
 
 				}
 
@@ -118,10 +122,12 @@ public class OrdersUI
 				{
 					response = api.retrieveOrders(orderid);
 					System.out.println(response);
+					Logger.info(response);
 
 				} catch (Exception e) {
 
 					System.out.println("Request failed:: " + e);
+					Logger.error("Request failed:: " + e);
 					
 				}
 
@@ -171,10 +177,12 @@ public class OrdersUI
 						System.out.println("\nCreating order...");
 						response = api.newOrder(date, first, last, address, phone);
 						System.out.println(response);
+						Logger.info(response);
 
 					} catch(Exception e) {
 
 						System.out.println("Request failed:: " + e);
+						Logger.error("Request failed:: " + e);
 
 					}
 
