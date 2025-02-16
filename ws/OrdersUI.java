@@ -43,6 +43,7 @@ public class OrdersUI
 		DateTimeFormatter dtf = null;				// Date object formatter
 		LocalDate localDate = null;					// Date object
 		WSClientAPI api = new WSClientAPI();	// RESTful api object
+		ClientLogger.info("Client application started"); // Logging when the application starts
 
 		/////////////////////////////////////////////////////////////////////////////////
 		// Main UI loop
@@ -71,14 +72,17 @@ public class OrdersUI
 				// Here we retrieve all the orders in the order database
 
 				System.out.println( "\nRetrieving All Orders::" );
+				ClientLogger.info("User selected option 1: Retrieve all orders.");
 				try
 				{
 					response = api.retrieveOrders();
 					System.out.println(response);
+					ClientLogger.info("Successfully retrieved all orders.");
 
 				} catch (Exception e) {
 
 					System.out.println("Request failed:: " + e);
+					ClientLogger.error("Failed to retrieve orders: " + e.getMessage());
 
 				}
 
@@ -107,6 +111,7 @@ public class OrdersUI
 					} catch (NumberFormatException e) {
 
 						System.out.println( "Not a number, please try again..." );
+						ClientLogger.error("User entered invalid order ID: " + orderid);
 						System.out.println("\nPress enter to continue..." );
 
 					} // if
@@ -117,10 +122,12 @@ public class OrdersUI
 				{
 					response = api.retrieveOrders(orderid);
 					System.out.println(response);
+					ClientLogger.info("Successfully retrieved order with ID " + orderid);
 
 				} catch (Exception e) {
 
 					System.out.println("Request failed:: " + e);
+					ClientLogger.error("Failed to retrieve order with ID " + orderid + ": " + e.getMessage());
 					
 				}
 
@@ -170,16 +177,19 @@ public class OrdersUI
 						System.out.println("\nCreating order...");
 						response = api.newOrder(date, first, last, address, phone);
 						System.out.println(response);
+						ClientLogger.info("Successfully created new order: " + response);
 
 					} catch(Exception e) {
 
 						System.out.println("Request failed:: " + e);
+						ClientLogger.error("Failed to create new order: " + e.getMessage());
 
 					}
 
 				} else {
 
 					System.out.println("\nOrder not created...");
+					ClientLogger.warn("User cancelled order creation.");
 				}
 
 				System.out.println("\nPress enter to continue..." );
@@ -197,11 +207,13 @@ public class OrdersUI
 
 				done = true;
 				System.out.println( "\nDone...\n\n" );
+				ClientLogger.info("User exited the application.");
 
 			} // if
 
 		} // while
-
+		ClientLogger.info("Shutting down client application.");
+		ClientLogger.shutdown();
   	} // main
 
 } // OrdersUI
