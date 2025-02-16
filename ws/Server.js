@@ -24,12 +24,14 @@
 * External Dependencies: mysql, express/body-parser, REST.js
 *
 ******************************************************************************************************************/
+require("./ServiceLogger")
 var mysqlConfig = require('./config/mysql.config.json')
 var express = require("express");             //express is a Node.js web application framework 
 var mysql   = require("mysql");               //Database
 var bodyParser  = require("body-parser");     //Javascript parser utility
 var rest = require("./REST.js");              //REST services/handler module
 var app  = express();                         //express instance
+var serviceEventBus = require("./ServiceEventBus");
 
 // Function definition
 function REST(){
@@ -77,6 +79,7 @@ REST.prototype.configureExpress = function(connection) {
 
 REST.prototype.startServer = function() {
       app.listen(3000,function(){
+          serviceEventBus.emit("log", "Server started successfully at Port 3000", "SUCCESS", "SERVER", "");
           console.log("Server Started at Port 3000.");
       });
 }
@@ -84,6 +87,7 @@ REST.prototype.startServer = function() {
 // We land here if we can't connect to mysql
 
 REST.prototype.stop = function(err) {
+    serviceEventBus.emit("log", "Server stopped: " + err.message, "ERROR", "SERVER", "MYSQL CONNECTION", "");
     console.log("Issue connecting with mysql and/or connecting to the database.\n" + err);
     process.exit(1);
 }

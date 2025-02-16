@@ -25,7 +25,9 @@
 *
 ******************************************************************************************************************/
 
+require("./ServiceLogger");
 var mysql   = require("mysql");     //Database
+var serviceEventBus = require("./ServiceEventBus");
 
 function REST_ROUTER(router,connection) {
     var self = this;
@@ -42,6 +44,7 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
     // res parameter is the response object
 
     router.get("/",function(req,res){
+        serviceEventBus.emit("log", "GET / requested", "INFO", "REST API", req.ip);
         res.json({"Message":"Orders Webservices Server Version 1.0"});
     });
     
@@ -50,14 +53,17 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
     // res parameter is the response object
   
     router.get("/orders",function(req,res){
+        serviceEventBus.emit("log", "GET /orders requested", "INFO", "REST API", req.ip);
         console.log("Getting all database entries..." );
         var query = "SELECT * FROM ??";
         var table = ["orders"];
         query = mysql.format(query,table);
         connection.query(query,function(err,rows){
             if(err) {
+                serviceEventBus.emit("log", "Error fetching orders", "ERROR", "REST API", req.ip);
                 res.json({"Error" : true, "Message" : "Error executing MySQL query"});
             } else {
+                serviceEventBus.emit("log", `Successfully retrieved ${rows.length} orders`, "SUCCESS", "REST API", req.ip);
                 res.json({"Error" : false, "Message" : "Success", "Orders" : rows});
             }
         });
@@ -68,14 +74,17 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
     // res parameter is the response object
      
     router.get("/orders/:order_id",function(req,res){
+        serviceEventBus.emit("log", `GET /orders/${orderId} requested`, "INFO", "REST API", req.ip);
         console.log("Getting order ID: ", req.params.order_id );
         var query = "SELECT * FROM ?? WHERE ??=?";
         var table = ["orders","order_id",req.params.order_id];
         query = mysql.format(query,table);
         connection.query(query,function(err,rows){
             if(err) {
+                serviceEventBus.emit("log", `Error fetching order ${orderId}`, "ERROR", "REST API", req.ip);
                 res.json({"Error" : true, "Message" : "Error executing MySQL query"});
             } else {
+                serviceEventBus.emit("log", `Successfully retrieved order ${orderId}`, "SUCCESS", "REST API", req.ip);
                 res.json({"Error" : false, "Message" : "Success", "Users" : rows});
             }
         });
@@ -88,14 +97,17 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
     router.post("/orders",function(req,res){
         //console.log("url:", req.url);
         //console.log("body:", req.body);
+        serviceEventBus.emit("log", "POST /orders requested with data: " + JSON.stringify(req.body), "INFO", "REST API", req.ip);
         console.log("Adding to orders table ", req.body.order_date,",",req.body.first_name,",",req.body.last_name,",",req.body.address,",",req.body.phone);
         var query = "INSERT INTO ??(??,??,??,??,??) VALUES (?,?,?,?,?)";
         var table = ["orders","order_date","first_name","last_name","address","phone",req.body.order_date,req.body.first_name,req.body.last_name,req.body.address,req.body.phone];
         query = mysql.format(query,table);
         connection.query(query,function(err,rows){
             if(err) {
+                serviceEventBus.emit("log", "Error creating order", "ERROR", "REST API", req.ip)
                 res.json({"Error" : true, "Message" : "Error executing MySQL query"});
             } else {
+                serviceEventBus.emit("log", "Successfully created order", "SUCCESS", "REST API", req.ip);
                 res.json({"Error" : false, "Message" : "User Added !"});
             }
         });
