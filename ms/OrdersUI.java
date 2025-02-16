@@ -78,12 +78,12 @@ public class OrdersUI
 				{
 					response = api.retrieveOrders();
 					System.out.println(response);
-					Logger.info("Successfully Retrieved list of all orders: " + response);
+					ClientLogger.info("Successfully Retrieved list of all orders: " + response);
 
 				} catch (Exception e) {
 
 					System.out.println("Request failed:: " + e);
-					Logger.error("\"Failed to retrieve list of all orders: " + e);
+					ClientLogger.error("\"Failed to retrieve list of all orders: " + e);
 
 				}
 
@@ -122,12 +122,12 @@ public class OrdersUI
 				{
 					response = api.retrieveOrders(orderid);
 					System.out.println(response);
-					Logger.info("Successfully Retrieved Order with order id " + orderid + " : " + response);
+					ClientLogger.info("Successfully Retrieved Order with order id " + orderid + " : " + response);
 
 				} catch (Exception e) {
 
 					System.out.println("Request failed:: " + e);
-					Logger.error("Failed to retrieve Order with order id " + orderid + " : " + e);
+					ClientLogger.error("Failed to retrieve Order with order id " + orderid + " : " + e);
 					
 				}
 
@@ -177,12 +177,12 @@ public class OrdersUI
 						System.out.println("\nCreating order...");
 						response = api.newOrder(date, first, last, address, phone);
 						System.out.println(response);
-						Logger.info("Successfully created new order: " + response);
+						ClientLogger.info("Successfully created new order: " + response);
 
 					} catch(Exception e) {
 
 						System.out.println("Request failed:: " + e);
-						Logger.error("Failed to create new order: " + e);
+						ClientLogger.error("Failed to create new order: " + e);
 
 					}
 
