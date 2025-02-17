@@ -69,6 +69,7 @@ public class OrdersUI
 			//////////// option 1 ////////////
 			if ( option == '1' )
 			{
+				// Here we retrieve all the orders in the ms_orderinfo database
 				System.out.println( "\nRetrieving All Orders::" );
 				try
 				{
