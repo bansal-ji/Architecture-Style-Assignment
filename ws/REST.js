@@ -74,17 +74,18 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
     // res parameter is the response object
      
     router.get("/orders/:order_id",function(req,res){
+        const orderId = req.params.order_id;
         serviceEventBus.emit("log", `GET /orders/${orderId} requested`, "INFO", "REST API", req.ip);
-        console.log("Getting order ID: ", req.params.order_id );
+        console.log("Getting order ID: ", orderId );
         var query = "SELECT * FROM ?? WHERE ??=?";
-        var table = ["orders","order_id",req.params.order_id];
+        var table = ["orders","order_id",orderId];
         query = mysql.format(query,table);
         connection.query(query,function(err,rows){
             if(err) {
-                serviceEventBus.emit("log", `Error fetching order ${orderId}`, "ERROR", "REST API", req.ip);
+                serviceEventBus.emit("log", `Error fetching order with order id: ${orderId}`, "ERROR", "REST API", req.ip);
                 res.json({"Error" : true, "Message" : "Error executing MySQL query"});
             } else {
-                serviceEventBus.emit("log", `Successfully retrieved order ${orderId}`, "SUCCESS", "REST API", req.ip);
+                serviceEventBus.emit("log", `Successfully retrieved order with order id: ${orderId}`, "SUCCESS", "REST API", req.ip);
                 res.json({"Error" : false, "Message" : "Success", "Users" : rows});
             }
         });
@@ -107,7 +108,7 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
                 serviceEventBus.emit("log", "Error creating order", "ERROR", "REST API", req.ip)
                 res.json({"Error" : true, "Message" : "Error executing MySQL query"});
             } else {
-                serviceEventBus.emit("log", "Successfully created order", "SUCCESS", "REST API", req.ip);
+                serviceEventBus.emit("log", `Successfully created order with order id: ${rows.insertId}`, "SUCCESS", "REST API", req.ip);
                 res.json({"Error" : false, "Message" : "User Added !"});
             }
         });
@@ -118,14 +119,18 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
     // res parameter is the response object
      
     router.delete("/orders/delete/:order_id",function(req,res){
-        console.log("Getting order ID: ", req.params.order_id );
+        const orderId = req.params.order_id;
+        serviceEventBus.emit("log", `DELETE /orders/${orderId} requested`, "INFO", "REST API", req.ip);
+        console.log("Getting order ID: ", orderId );
         var query = "DELETE FROM ?? WHERE ??=?"
-        var table = ["orders","order_id",req.params.order_id];
+        var table = ["orders","order_id",orderId];
         query = mysql.format(query,table);
         connection.query(query,function(err,rows){
             if(err) {
+                serviceEventBus.emit("log", `Error deleting order with order id: ${orderId}`, "ERROR", "REST API", req.ip)
                 res.json({"Error" : true, "Message" : "Error executing MySQL query"});
             } else {
+                serviceEventBus.emit("log", `Successfully deleted order with order id: ${orderId}`, "SUCCESS", "REST API", req.ip);
                 res.json({"Error" : false, "Message" : "Order Deleted !"});
             }
         });
