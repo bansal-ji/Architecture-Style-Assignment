@@ -27,7 +27,8 @@
 
 require("./ServiceLogger");
 var mysql   = require("mysql");     //Database
-var serviceEventBus = require("./ServiceEventBus");
+var login = require("./Login.js");  //Login
+var serviceEventBus = require("./ServiceEventBus"); //Event-bus
 
 function REST_ROUTER(router,connection) {
     var self = this;
@@ -48,6 +49,16 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
         res.json({"Message":"Orders Webservices Server Version 1.0"});
     });
     
+
+    // Public endpoints for sign-up and login (do not require token)
+    router.post("/signup", login.signup);
+    router.post("/login", login.login);
+
+    // Apply token verification to all routes defined after this point
+    router.use(function(req, res, next) {
+        login.tokenVerifier(req, res, next);
+    });
+
     // GET for /orders specifier - returns all orders currently stored in the database
     // req paramdter is the request object
     // res parameter is the response object
