@@ -128,6 +128,8 @@ public class WSClientAPI
 		//Form the request header and instantiate the response code
 		con.setRequestMethod("GET");
 		con.setRequestProperty("x-access-token", token);
+      
+		int responseCode = con.getResponseCode();
 
 		//Set up a buffer to read the response from the server
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -164,6 +166,8 @@ public class WSClientAPI
 		//Form the request header and instantiate the response code
 		con.setRequestMethod("GET");
 		con.setRequestProperty("x-access-token", token);
+
+		int responseCode = con.getResponseCode();
 
 		//Set up a buffer to read the response from the server
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -249,7 +253,7 @@ public class WSClientAPI
 	*		   orderinfo database.
 	********************************************************************************/
 
-	public String deleteOrder(String id) throws Exception
+	public String deleteOrder(String id, String token) throws Exception
 	{
 		// Set up the URL and connect to the node server
 		String url = "http://ws_server:3000/api/orders/delete/"+id;
@@ -258,6 +262,8 @@ public class WSClientAPI
 
 		//Form the request header and instantiate the response code
 		con.setRequestMethod("DELETE");
+        con.setRequestProperty("x-access-token", token);
+
 		int responseCode = con.getResponseCode();
 
 		//Set up a buffer to read the response from the server

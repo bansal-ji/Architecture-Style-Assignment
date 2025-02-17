@@ -141,7 +141,7 @@ exports.login = function(req, res) {
 };
 
 /**
- * Express middleware function that verifies the token.
+ * Express function that verifies the token.
  * Checks for the token in the 'x-access-token' header, query string, or request body.
  */
 exports.tokenVerifier = function(req, res, next) {

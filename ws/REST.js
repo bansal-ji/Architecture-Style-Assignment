@@ -51,7 +51,7 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
     router.post("/signup", login.signup);
     router.post("/login", login.login);
 
-    // Apply token verification middleware to all routes defined after this point
+    // Apply token verification to all routes defined after this point
     router.use(function(req, res, next) {
         login.tokenVerifier(req, res, next);
     });

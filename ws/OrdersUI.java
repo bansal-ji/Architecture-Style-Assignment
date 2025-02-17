@@ -260,7 +260,7 @@ public class OrdersUI
 
 				try
 				{
-					response = api.deleteOrder(orderid);
+					response = api.deleteOrder(orderid, token);
 					System.out.println(response);
 
 				} catch (Exception e) {
