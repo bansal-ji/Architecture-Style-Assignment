@@ -1,4 +1,23 @@
 services:
+  auth:
+    image: ms_auth
+    container_name: ms_auth
+    build:
+      context: .
+      dockerfile: Dockerfile-as
+      args:
+        MYSQL_PASSWORD: foo
+    depends_on:
+      - mysql
+    environment:
+      RMI_REMOTE_HOST: ms_auth
+      RMI_REMOTE_PORT: 1096
+      MYSQL_REMOTE_HOST: ms_mysql 
+      MYSQL_REMOTE_PORT: 3306
+      SECRET_KEY: mySuperDuperSecretKeyThatNooneWillGuess
+    networks:
+      - ms
+
   create:
     image: ms_create
     container_name: ms_create
