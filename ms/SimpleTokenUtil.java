@@ -25,7 +25,7 @@ public class SimpleTokenUtil {
         try {
             byte[] decodedBytes = Base64.getDecoder().decode(token);
             String encryptedPayload = new String(decodedBytes);
-            String payload = xorEncrypt(encryptedPayload, SECRET_KEY); // XOR is symmetric
+            String payload = xorEncrypt(encryptedPayload, SECRET_KEY);
             String[] parts = payload.split(":");
             if (parts.length != 2) {
                 return false;
