@@ -33,6 +33,17 @@ CREATE TABLE `orders` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL
+);
+INSERT INTO users(username, password) VALUES ('loginuser', 'password');
+INSERT INTO users(username, password) VALUES ('loginuser1', 'password');
+INSERT INTO users(username, password) VALUES ('loginuser2', 'password');
+INSERT INTO users(username, password) VALUES ('loginuser3', 'password');
+INSERT INTO users(username, password) VALUES ('loginuser4', 'password');
+
 --
 -- Dumping data for table `orders`
 --

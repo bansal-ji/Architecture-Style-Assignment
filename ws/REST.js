@@ -26,6 +26,7 @@
 ******************************************************************************************************************/
 
 var mysql   = require("mysql");     //Database
+var login = require("./Login.js");  //Login
 
 function REST_ROUTER(router,connection) {
     var self = this;
@@ -45,6 +46,16 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
         res.json({"Message":"Orders Webservices Server Version 1.0"});
     });
     
+
+    // Public endpoints for sign-up and login (do not require token)
+    router.post("/signup", login.signup);
+    router.post("/login", login.login);
+
+    // Apply token verification to all routes defined after this point
+    router.use(function(req, res, next) {
+        login.tokenVerifier(req, res, next);
+    });
+
     // GET for /orders specifier - returns all orders currently stored in the database
     // req paramdter is the request object
     // res parameter is the response object
@@ -97,6 +108,24 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
                 res.json({"Error" : true, "Message" : "Error executing MySQL query"});
             } else {
                 res.json({"Error" : false, "Message" : "User Added !"});
+            }
+        });
+    });
+
+    // DELETE for /orders/delete/order id specifier - returns the order for the provided order ID
+    // req parameter is the request object
+    // res parameter is the response object
+     
+    router.delete("/orders/delete/:order_id",function(req,res){
+        console.log("Getting order ID: ", req.params.order_id );
+        var query = "DELETE FROM ?? WHERE ??=?"
+        var table = ["orders","order_id",req.params.order_id];
+        query = mysql.format(query,table);
+        connection.query(query,function(err,rows){
+            if(err) {
+                res.json({"Error" : true, "Message" : "Error executing MySQL query"});
+            } else {
+                res.json({"Error" : false, "Message" : "Order Deleted !"});
             }
         });
     });

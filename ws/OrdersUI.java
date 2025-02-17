@@ -45,6 +45,48 @@ public class OrdersUI
 		WSClientAPI api = new WSClientAPI();	// RESTful api object
 		ClientLogger.info("Client application started"); // Logging when the application starts
 
+        // -------- Authentication Loop --------
+        boolean authenticated = false;
+        String token = "";
+        while (!authenticated) {
+            System.out.println("\nWelcome to the Orders Database!");
+            System.out.println("Select an option:");
+            System.out.println("0: Sign up");
+            System.out.println("1: Log in");
+            System.out.print(">>>> ");
+            int authChoice = keyboard.nextInt();
+            keyboard.nextLine();
+
+            System.out.print("Enter username: ");
+            String username = keyboard.nextLine();
+            System.out.print("Enter password: ");
+            String password = keyboard.nextLine();
+
+            try {
+                if (authChoice == 0) {
+                    // Sign up process
+                    response = api.signup(username, password);
+                    System.out.println(response);
+                    // After sign-up, prompt for login.
+                } else if (authChoice == 1) {
+                    // Log in process
+                    token = api.login(username, password);
+                    // Here we assume that a valid token is returned in a straightforward manner.
+                    if (token != null && !token.isEmpty() && !token.contains("Invalid") && !token.contains("failed")) {
+                        System.out.println("Login successful! Your token: " + token);
+                        authenticated = true;
+                    } else {
+                        System.out.println("Login failed. Please try again.");
+                    }
+                } else {
+                    System.out.println("Invalid option. Please try again.");
+                }
+            } catch (Exception e) {
+                System.out.println("Authentication error: " + e);
+            }
+        }
+        // -------- End Authentication Loop --------
+
 		/////////////////////////////////////////////////////////////////////////////////
 		// Main UI loop
 		/////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +100,8 @@ public class OrdersUI
 			System.out.println( "Select an Option: \n" );
 			System.out.println( "1: Retrieve all orders in the order database." );
 			System.out.println( "2: Retrieve an order by ID." );
-			System.out.println( "3: Add a new order to the order database." );				
+			System.out.println( "3: Add a new order to the order database." );	
+			System.out.println( "4: Delete an order from the order database." );		
 			System.out.println( "X: Exit\n" );
 			System.out.print( "\n>>>> " );
 			option = keyboard.next().charAt(0);	
@@ -75,7 +118,7 @@ public class OrdersUI
 				ClientLogger.info("User selected option 1: Retrieve all orders.");
 				try
 				{
-					response = api.retrieveOrders();
+					response = api.retrieveOrders(token);
 					System.out.println(response);
 					ClientLogger.info("Successfully retrieved all orders.");
 
@@ -120,7 +163,7 @@ public class OrdersUI
 
 				try
 				{
-					response = api.retrieveOrders(orderid);
+					response = api.retrieveOrders(orderid, token);
 					System.out.println(response);
 					ClientLogger.info("Successfully retrieved order with ID " + orderid);
 
@@ -175,7 +218,7 @@ public class OrdersUI
 					try
 					{
 						System.out.println("\nCreating order...");
-						response = api.newOrder(date, first, last, address, phone);
+						response = api.newOrder(date, first, last, address, phone, token);
 						System.out.println(response);
 						ClientLogger.info("Successfully created new order: " + response);
 
@@ -196,6 +239,48 @@ public class OrdersUI
 				c.readLine();
 
 				option = ' '; //Clearing option. This incase the user enterd X/x the program will not exit.
+
+			} // if
+
+			//////////// option 4 ////////////
+
+			if ( option == '4' )
+			{
+				// Here we get the order ID from the user
+
+				error = true;
+
+				while (error)
+				{
+					System.out.print( "\nEnter the order ID: " );
+					orderid = keyboard.nextLine();
+
+					try
+					{
+						Integer.parseInt(orderid);
+						error = false;
+					} catch (NumberFormatException e) {
+
+						System.out.println( "Not a number, please try again..." );
+						System.out.println("\nPress enter to continue..." );
+
+					} // if
+
+				} // while
+
+				try
+				{
+					response = api.deleteOrder(orderid, token);
+					System.out.println(response);
+
+				} catch (Exception e) {
+
+					System.out.println("Request failed:: " + e);
+					
+				}
+
+				System.out.println("\nPress enter to continue..." );
+				c.readLine();
 
 			} // if
 
