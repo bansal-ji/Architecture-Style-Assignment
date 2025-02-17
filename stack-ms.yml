@@ -50,8 +50,6 @@ services:
       RMI_REMOTE_PORT: 1097
       MYSQL_REMOTE_HOST: ms_mysql
       MYSQL_REMOTE_PORT: 3306
-      DELETE_SERVICE_HOST: ms_delete
-      DELETE_SERVICE_PORT: 1097
     networks:
       - ms
 
