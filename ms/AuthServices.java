@@ -5,7 +5,6 @@ import java.sql.*;
 
 public class AuthServices extends UnicastRemoteObject implements AuthServicesAI {
 
-    // JDBC and database details (reuse your Configuration settings)
     static final String JDBC_CONNECTOR = "com.mysql.jdbc.Driver";  
     static final String DB_URL = Configuration.getJDBCConnection();
     static final String USER = "root";
