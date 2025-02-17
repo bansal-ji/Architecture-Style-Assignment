@@ -17,7 +17,7 @@ services:
       SECRET_KEY: mySuperDuperSecretKeyThatNooneWillGuess
     networks:
       - ms
-      
+
   create:
     image: ms_create
     container_name: ms_create
@@ -55,6 +55,25 @@ services:
       SECRET_KEY: mySuperDuperSecretKeyThatNooneWillGuess
     networks:
       - ms
+  
+  delete:
+    image: ms_delete
+    container_name: ms_delete
+    build:
+      context: .
+      dockerfile: Dockerfile-ds
+      args:
+        MYSQL_PASSWORD: foo
+    depends_on:
+      - mysql
+    environment:
+      RMI_REMOTE_HOST: ms_delete
+      RMI_REMOTE_PORT: 1097
+      MYSQL_REMOTE_HOST: ms_mysql
+      MYSQL_REMOTE_PORT: 3306
+      SECRET_KEY: mySuperDuperSecretKeyThatNooneWillGuess
+    networks:
+      - ms
 
   client:
     image: ms_client
@@ -72,7 +91,8 @@ services:
       - ms
 
   mysql:
-    image: mysql:5.7
+    image: mysql:5
+    platform: linux/amd64
     container_name: ms_mysql
     volumes:
       - ./init-db:/docker-entrypoint-initdb.d
@@ -84,10 +104,11 @@ services:
     expose:
       - 3306
     networks:
-        - ms
+      - ms
 
 networks:
   ms:
 volumes:
   ms_db:
     external: true
+
