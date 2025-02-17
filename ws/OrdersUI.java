@@ -165,12 +165,12 @@ public class OrdersUI
 				{
 					response = api.retrieveOrders(orderid, token);
 					System.out.println(response);
-					ClientLogger.info("Successfully retrieved order with ID " + orderid);
+					ClientLogger.info("Successfully retrieved order with order id " + orderid);
 
 				} catch (Exception e) {
 
 					System.out.println("Request failed:: " + e);
-					ClientLogger.error("Failed to retrieve order with ID " + orderid + ": " + e.getMessage());
+					ClientLogger.error("Failed to retrieve order with order id " + orderid + ": " + e.getMessage());
 					
 				}
 
@@ -262,6 +262,7 @@ public class OrdersUI
 					} catch (NumberFormatException e) {
 
 						System.out.println( "Not a number, please try again..." );
+						ClientLogger.error("User entered invalid order id for deletion: " + orderid);
 						System.out.println("\nPress enter to continue..." );
 
 					} // if
@@ -272,10 +273,12 @@ public class OrdersUI
 				{
 					response = api.deleteOrder(orderid, token);
 					System.out.println(response);
+					ClientLogger.info("Successfully deleted order with order id: " + orderid);
 
 				} catch (Exception e) {
 
 					System.out.println("Request failed:: " + e);
+					ClientLogger.error("Failed to delete order with order id " + orderid + ": " + e.getMessage());
 					
 				}
 
