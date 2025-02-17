@@ -173,7 +173,7 @@ public class WSClientAPI
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
 		//Form the request header and instantiate the response code
-		con.setRequestMethod("GET");
+		con.setRequestMethod("DELETE");
 		int responseCode = con.getResponseCode();
 
 		//Set up a buffer to read the response from the server

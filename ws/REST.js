@@ -105,7 +105,7 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection) {
     // req parameter is the request object
     // res parameter is the response object
      
-    router.get("/orders/delete/:order_id",function(req,res){
+    router.delete("/orders/delete/:order_id",function(req,res){
         console.log("Getting order ID: ", req.params.order_id );
         var query = "DELETE FROM ?? WHERE ??=?"
         var table = ["orders","order_id",req.params.order_id];
