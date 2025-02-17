@@ -80,7 +80,7 @@ public class WSClientAPI
 	public String retrieveOrders(String id) throws Exception
 	{
 		// Set up the URL and connect to the node server
-		String url = "http://localhost:3000/api/orders/"+id;
+		String url = "http://ws_server:3000/api/orders/"+id;
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -115,7 +115,7 @@ public class WSClientAPI
    	public String newOrder(String Date, String FirstName, String LastName, String Address, String Phone) throws Exception
 	{
 		// Set up the URL and connect to the node server		
-		URL url = new URL("http://localhost:3000/api/orders");
+		URL url = new URL("http://ws_server:3000/api/orders");
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
 		// The POST parameters
@@ -156,4 +156,41 @@ public class WSClientAPI
 		return(response.toString());
 		
     } // newOrder
+
+	/********************************************************************************
+	* Description: Gets and returns the order based on the provided id from the
+	*              orderinfo database.
+	* Parameters: None
+	* Returns: String of all the order corresponding to the id argument in the 
+	*		   orderinfo database.
+	********************************************************************************/
+
+	public String deleteOrder(String id) throws Exception
+	{
+		// Set up the URL and connect to the node server
+		String url = "http://ws_server:3000/api/orders/delete/"+id;
+		URL obj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+		//Form the request header and instantiate the response code
+		con.setRequestMethod("DELETE");
+		int responseCode = con.getResponseCode();
+
+		//Set up a buffer to read the response from the server
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+
+		//Loop through the input and build the response string.
+		//When done, close the stream.		
+
+		while ((inputLine = in.readLine()) != null) 
+		{
+			response.append(inputLine);
+		}
+		in.close();
+
+		return(response.toString());
+
+	}
 } // WSClientAPI
