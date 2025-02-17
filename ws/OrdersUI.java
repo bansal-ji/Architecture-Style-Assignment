@@ -44,6 +44,48 @@ public class OrdersUI
 		LocalDate localDate = null;					// Date object
 		WSClientAPI api = new WSClientAPI();	// RESTful api object
 
+        // -------- Authentication Loop --------
+        boolean authenticated = false;
+        String token = "";
+        while (!authenticated) {
+            System.out.println("\nWelcome to the Orders Database!");
+            System.out.println("Select an option:");
+            System.out.println("0: Sign up");
+            System.out.println("1: Log in");
+            System.out.print(">>>> ");
+            int authChoice = keyboard.nextInt();
+            keyboard.nextLine();
+
+            System.out.print("Enter username: ");
+            String username = keyboard.nextLine();
+            System.out.print("Enter password: ");
+            String password = keyboard.nextLine();
+
+            try {
+                if (authChoice == 0) {
+                    // Sign up process
+                    response = api.signup(username, password);
+                    System.out.println(response);
+                    // After sign-up, prompt for login.
+                } else if (authChoice == 1) {
+                    // Log in process
+                    token = api.login(username, password);
+                    // Here we assume that a valid token is returned in a straightforward manner.
+                    if (token != null && !token.isEmpty() && !token.contains("Invalid") && !token.contains("failed")) {
+                        System.out.println("Login successful! Your token: " + token);
+                        authenticated = true;
+                    } else {
+                        System.out.println("Login failed. Please try again.");
+                    }
+                } else {
+                    System.out.println("Invalid option. Please try again.");
+                }
+            } catch (Exception e) {
+                System.out.println("Authentication error: " + e);
+            }
+        }
+        // -------- End Authentication Loop --------
+
 		/////////////////////////////////////////////////////////////////////////////////
 		// Main UI loop
 		/////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +116,7 @@ public class OrdersUI
 				System.out.println( "\nRetrieving All Orders::" );
 				try
 				{
-					response = api.retrieveOrders();
+					response = api.retrieveOrders(token);
 					System.out.println(response);
 
 				} catch (Exception e) {
@@ -116,7 +158,7 @@ public class OrdersUI
 
 				try
 				{
-					response = api.retrieveOrders(orderid);
+					response = api.retrieveOrders(orderid, token);
 					System.out.println(response);
 
 				} catch (Exception e) {
@@ -169,7 +211,7 @@ public class OrdersUI
 					try
 					{
 						System.out.println("\nCreating order...");
-						response = api.newOrder(date, first, last, address, phone);
+						response = api.newOrder(date, first, last, address, phone, token);
 						System.out.println(response);
 
 					} catch(Exception e) {
@@ -218,7 +260,7 @@ public class OrdersUI
 
 				try
 				{
-					response = api.deleteOrder(orderid);
+					response = api.deleteOrder(orderid, token);
 					System.out.println(response);
 
 				} catch (Exception e) {
