@@ -1,3 +1,25 @@
+/******************************************************************************************************************
+* File:OrdersUI.java
+* Course: 17655
+* Project: Assignment A3
+* Copyright: Copyright (c) 2018 Carnegie Mellon University
+* Versions:
+*	1.0 February 2018 - Initial write of assignment 3 (ajl).
+*
+* Description: This class is the console for the an orders database. This interface uses a webservices or microservice
+* client class to update the ms_orderinfo MySQL database. 
+*
+* Parameters: None
+*
+* Internal Methods: None
+*
+* External Dependencies (one of the following):
+*	- MSlientAPI - this class provides an interface to a set of microservices
+*	- RetrieveServices - this is the server-side micro service for retrieving info from the ms_orders database
+*	- CreateServices - this is the server-side micro service for creating new orders in the ms_orders database
+*
+******************************************************************************************************************/
+
 import java.lang.Exception;
 import java.util.Scanner;
 import java.time.LocalDate;
@@ -30,18 +52,19 @@ public class OrdersUI
 
 		while (!done)
 		{	
-			// Print the main menu options
+			// Here, is the main menu set of choices
 			System.out.println( "\n\n\n\n" );
 			System.out.println( "Orders Database User Interface: \n" );
 			System.out.println( "Select an Option: \n" );
 			System.out.println( "1: Retrieve all orders in the order database." );
 			System.out.println( "2: Retrieve an order by ID." );
 			System.out.println( "3: Add a new order to the order database." );				
-			System.out.println( "4: Delete an order from the database." );  // ✅ Moved Delete Option Here
+			System.out.println( "4: Delete an order from the database." );  
 			System.out.println( "X: Exit\n" );
 			System.out.print( "\n>>>> " );
 			option = keyboard.next().charAt(0);	
-			keyboard.nextLine();	// Removes data from keyboard buffer
+			keyboard.nextLine();	// Removes data from keyboard buffer. If you don't clear the buffer, you blow 
+									// through the next call to nextLine()
 
 			//////////// option 1 ////////////
 			if ( option == '1' )
@@ -137,7 +160,7 @@ public class OrdersUI
 			} 
 
 			//////////// option 4: DELETE ORDER ////////////
-			else if ( option == '4' )  // ✅ Fix: Ensuring delete logic is within the menu selection
+			else if ( option == '4' )  
 			{
 				error = true;
 				while (error)

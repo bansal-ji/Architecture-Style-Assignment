@@ -59,7 +59,6 @@ public interface Configuration {
 		return Integer.valueOf(port);
 	}
 
-    // Add Delete Service Configuration
 	static String getDeleteServiceHost() {
 		final String key = "DELETE_SERVICE_HOST";
 		final String host = System.getenv(key);
