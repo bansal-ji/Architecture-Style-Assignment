@@ -44,7 +44,44 @@ public class OrdersUI
 		Scanner keyboard = new Scanner(System.in);	// keyboard scanner object for user input
 		DateTimeFormatter dtf = null;				// Date object formatter
 		LocalDate localDate = null;					// Date object
-		MSClientAPI api = new MSClientAPI();		// RESTful API object
+		MSClientAPI api = new MSClientAPI();	// RESTful api object
+		String token = ""; // Placeholder for authentication token
+
+
+		// -------------- Authentication Loop -----------------
+        boolean authenticated = false;
+        while (!authenticated) {
+            System.out.println("\n\nWelcome to the Orders Database!");
+            System.out.println("Please select an option:");
+            System.out.println("0: Sign up");
+            System.out.println("1: Log in");
+            System.out.print(">>>> ");
+            int authChoice = keyboard.nextInt();
+            keyboard.nextLine(); // Clear newline
+
+            System.out.print("Enter username: ");
+            String username = keyboard.nextLine();
+            System.out.print("Enter password: ");
+            String password = keyboard.nextLine();
+
+            if (authChoice == 0) {
+                // Signup process
+                response = api.signup(username, password);
+                System.out.println(response);
+                // After signup, we typically require the user to log in.
+            } 
+            if (authChoice == 1) {
+                // Login process
+                token = api.login(username, password);
+                // In our design, a valid token is returned if credentials are valid.
+                if (token != null && !token.startsWith("Invalid") && !token.startsWith("Login failed")) {
+                    System.out.println("Login successful! Your token: " + token);
+                    authenticated = true;
+                } else {
+                    System.out.println("Login failed. Please try again.");
+                }
+            }
+        }
 
 		/////////////////////////////////////////////////////////////////////////////////
 		// Main UI loop
@@ -71,9 +108,10 @@ public class OrdersUI
 			{
 				// Here we retrieve all the orders in the ms_orderinfo database
 				System.out.println( "\nRetrieving All Orders::" );
+				System.out.println( token );
 				try
 				{
-					response = api.retrieveOrders();
+					response = api.retrieveOrders(token);
 					System.out.println(response);
 				} 
 				catch (Exception e) {
@@ -103,7 +141,7 @@ public class OrdersUI
 
 				try
 				{
-					response = api.retrieveOrders(orderid);
+					response = api.retrieveOrders(orderid, token);
 					System.out.println(response);
 				} 
 				catch (Exception e) {
@@ -145,7 +183,7 @@ public class OrdersUI
 					try
 					{
 						System.out.println("\nCreating order...");
-						response = api.newOrder(date, first, last, address, phone);
+						response = api.newOrder(date, first, last, address, phone, token);
 						System.out.println(response);
 					} 
 					catch(Exception e) {
