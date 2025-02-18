@@ -87,7 +87,7 @@ REST.prototype.startServer = function() {
 // We land here if we can't connect to mysql
 
 REST.prototype.stop = function(err) {
-    serviceEventBus.emit("log", "Server stopped: " + err.message, "ERROR", "SERVER", "MYSQL CONNECTION", "");
+    serviceEventBus.emit("log", "Server stopped: " + err.message, "ERROR", "SERVER", "MYSQL CONNECTION");
     console.log("Issue connecting with mysql and/or connecting to the database.\n" + err);
     process.exit(1);
 }

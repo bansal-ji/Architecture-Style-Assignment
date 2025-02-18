@@ -2,8 +2,12 @@ const fs = require("fs");
 const path = require("path");
 const serviceEventBus = require("./ServiceEventBus");
 
-const LOG_FILE_PATH = path.join(__dirname, "ws_service_logs.txt");
+const LOG_DIR = "/usr/app/ws/logs";
+const LOG_FILE_PATH = path.join(LOG_DIR, "ws_service_logs.txt");
 
+if (!fs.existsSync(LOG_DIR)) {
+    fs.mkdirSync(LOG_DIR, { recursive: true });
+}
 function writeServiceLog(message) {
     const timestamp = new Date().toISOString();
     const logMessage = `[${timestamp}] ${message}\n`;
