@@ -1,4 +1,4 @@
-# Installation and Setup
+# Installation and Setup V2.0
 
 ## Preamble
 
@@ -44,6 +44,8 @@ easy to navigate to on the command line. It’s a good idea to give it a nice sh
 - `Dockerfile-wsc` – file: Docker build instructions for the web-services client
 - `Dockerfile-cs` –  file: Docker build instructions for the microservices service: CreateServices
 - `Dockerfile-rs` –  file: Docker build instructions for the microservices service: RetrieveServices
+- `Dockerfile-ds` –  file: Docker build instructions for the microservices service: DeleteServices
+- `Dockerfile-as` –  file: Docker build instructions for the microservices service: AuthServices
 - `Dockerfile-msc` –  file: Docker build instructions for the microservices service
 - `stack-ws.yml`, `stack-ws-mx.yml` – file: Docker compose for building and running the web-services server and database stack. (`-mx` for Apple Silicon Macs.)
 - `stack-ms.yml`, `stack-ms-mx.yml` –  file: Docker compose file for building and running the microservices server and database stack. (`-mx` for Apple Silicon Macs.)
@@ -90,7 +92,7 @@ just with different files and directories.
 
 ### MySQL database preparation for web-services
 
-1. You will need to set up the password for access to MySQL containing the web-services data. To do this, you will need to edit the file: `ws.yml`. Change the following lines:
+1. You will need to set up the password for access to MySQL containing the web-services data. To do this, you will need to edit the file: `ws.yml`. Change the following lines [Default foo]:
 
      ```
        MYSQL_PASSWORD: foo
@@ -100,7 +102,7 @@ just with different files and directories.
 
 2. You will need to create a place on your machine to store the database files, so that database information persists between runs. (Without this, 
 MySQL will reset the data every time you start the example.) We will do this with Docker volumes. 
-Create a Docker volume, `ws_db`, using:
+Create a Docker volume, `ws_db`, using [Default foo]:
 
     ```bash
     $ docker volume create ws_db
@@ -145,6 +147,7 @@ Note that if you want to start from scratch and reinitialize the database, you s
       $ docker volume rm ms_db
 ```
 You will receive an error if you still have containers using the volume. If there is no error, the volume name will be printed on the console. You can check the deletion with `docker volume ls`.
+
 Note also, that the first time you run the web-services example, with an empty database, you will get errors from the container `ms_server` several times. This is because `ms_server` will be unable to connect during database initialization. 
 Docker will automatically restart `ms_server` until the database finishes installing.
 
@@ -208,7 +211,35 @@ A client container is created when you start docker compose. To connect to it an
 $ docker-compose -f ws.yml exec client java OrdersUI
 ```
 
-This will give you a menu and you should be able to choose options. To test everything is ok, select `1: Retrieve all orders in the order database`.
+This will give you a welcome page with options to signup or login
+
+```
+Welcome to the Orders Database!
+Select an option:
+0: Sign up
+1: Log in
+```
+Signup: To create a new user, enter 0, then provide a username and password:
+
+```
+Enter username: loginuser5
+Enter password: passwordtest
+```
+
+Login: To authenticate an existing user, enter 1 and provide credentials:
+
+Note: We have setup the db to include a table 'users' by default with a few sample users filled in. Below is one example, the rest of sample users can be found in the section "Checking the MySQL Database Schema" of this file.
+
+```
+Enter username: loginuser
+Enter password: password
+```
+This will provide you with your session token, that will be used by every api call to authenticate.
+```
+Login successful! Your token: ARY0HB4QASEHSlRFYFxbQFFEf11IYlE=
+```
+
+Upon successful login, the main order management menu appears. To test everything is ok, select `1: Retrieve all orders in the order database`.
 You should see a result with no errors that looks like:
 
 ```
@@ -233,9 +264,11 @@ This will download the necessary base containers and build the microservices con
 
 ```
 ...
- ✔ Service client    Built                                                                                                                                                         1.5s 
- ✔ Service retrieve  Built                                                                                                                                                         1.5s 
- ✔ Service create    Built  
+✔ Service delete    Built  4.0s 
+✔ Service client    Built  4.0s 
+✔ Service create    Built  4.0s 
+✔ Service auth      Built  4.0s  
+✔ Service retrieve  Built  4.0s 
 ```
 Or
 ```
@@ -248,6 +281,14 @@ To run the example, execute the command:
 ```bash
 $ docker-compose -f ms.yml up
 ```
+
+You should get the logs like these if everything goes smoothly:
+```
+ms_mysql     | 2025-02-18T00:02:22.651608Z 0 [Note] Event Scheduler: Loaded 0 events
+ms_mysql     | 2025-02-18T00:02:22.652352Z 0 [Note] mysqld: ready for connections.
+ms_mysql     | Version: '5.7.44'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server (GPL)
+```
+
 
 The first time you do this (or have removed the contents of the ms-db folder). The microservices and the database will have started successfully when you see something like:
 
@@ -289,7 +330,35 @@ To run the CLI client to make requests to interact with the web services, the pr
 $ docker-compose -f ms.yml exec client java OrdersUI
 ```
 
-This will give you a menu and you should be able to choose options. To test everything is ok, select `1: Retrieve all orders in the order database`. You should see a result with no errors that looks like:
+This will give you a welcome page with options to signup or login
+
+```
+Welcome to the Orders Database!
+Select an option:
+0: Sign up
+1: Log in
+```
+Signup: To create a new user, enter 0, then provide a username and password:
+
+```
+Enter username: loginuser5
+Enter password: passwordtest
+```
+
+Login: To authenticate an existing user, enter 1 and provide credentials:
+
+Note: We have setup the db to include a table 'users' by default with a few sample users filled in. Below is one example, the rest of sample users can be found in the section "Checking the MySQL Database Schema" of this file.
+
+```
+Enter username: loginuser
+Enter password: password
+```
+This will provide you with your session token, that will be used by every api call to authenticate.
+```
+Login successful! Your token: ARY0HB4QASEHSlRFYFxbQFFEf11IYlE=
+```
+
+Upon successful login, the main order management menu appears. To test everything is ok, select `1: Retrieve all orders in the order database`. You should see a result with no errors that looks like:
 
 ```
 Retrieving All Orders::
@@ -316,7 +385,35 @@ mysql> use ws_orderinfo;
 mysql> show tables;
 ```
 
-You should see the “orders” table. Next check the table schema by typing:
+You should see the following “orders” and "users" table. 
+```
++------------------------+
+| Tables_in_ws_orderinfo |
++------------------------+
+| orders                 |
+| users                  |
++------------------------+
+```
+
+You can view the default usernames and passwords that we created for login by:
+```
+mysql> SELECT * FROM users;
+```
+This will show something like:
+```
++---------+------------+----------+
+| user_id | username   | password |
++---------+------------+----------+
+|       1 | loginuser  | password |
+|       2 | loginuser1 | password |
+|       3 | loginuser2 | password |
+|       4 | loginuser3 | password |
+|       5 | loginuser4 | password |
++---------+------------+----------+
+```
+
+
+Next check the table schema by typing:
 
 ```
 mysql> describe orders;
@@ -342,13 +439,29 @@ Now we repeat this process for the `ms_orderinfo` database as follows.
 mysql> use ms_orderinfo;
 mysql> show tables;
 ```
-Again, you should see the “orders” table. Next check the table schema by typing:
+Again, you should see the “orders” and the "users" table. You can check the login users by:
+
+```
+mysql> SELECT * FROM users;
+```
+
+Next check the table schema by typing:
 
 ```
 mysql> describe orders;
 ```
 
-You should see the same schema as shown above for the ws_orderinfo/orders table. 
+You should see the same schema as shown above for the ws_orderinfo/orders table and ws_orderinfo/users table. 
+
+## Logging
+
+##### Webservices Logging
+Web server logs can be viewed in docker, by opening ws_server files and going to the path usr/app/logs/ws_service_logs.txt
+
+Web client logs can be viewed in docker, by opening ws_client files and going to the path usr/app/logs/ws_client_logs.txt
+
+##### Microservices Logging
+Each mircoservice's logs can be viewed in the docker files of that particular service, located at the path usr/app/logs/server_application_logs.txt
 
 ## Notes on making changes
 
