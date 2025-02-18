@@ -25,11 +25,14 @@ public class AuthServices extends UnicastRemoteObject implements AuthServicesAI 
             stmt = conn.createStatement();
             String sql = "INSERT INTO users(username, password) VALUES ('" 
                           + username + "', '" + password + "')";
+
+            Logger.info("Successfully created new user: " + username);              
             stmt.executeUpdate(sql);
             stmt.close();
             conn.close();
         } catch(Exception e) {
             result = "Signup failed: " + e.toString();
+            Logger.error("Failed to create new user!");
         }
         return result;
     }
@@ -49,14 +52,17 @@ public class AuthServices extends UnicastRemoteObject implements AuthServicesAI 
             if (rs.next()) {
                 // Credentials are valid: generate a token valid for one hour (3600000 ms)
                 token = SimpleTokenUtil.generateToken(username, 3600000);
+                Logger.info("User logged in successfully");
             } else {
                 token = "Invalid credentials";
+                Logger.warn("User tried to login with wrong credentials");
             }
             rs.close();
             stmt.close();
             conn.close();
         } catch(Exception e) {
             token = "Login failed: " + e.toString();
+            Logger.error("Error while login user: " + e);
         }
         return token;
     }
