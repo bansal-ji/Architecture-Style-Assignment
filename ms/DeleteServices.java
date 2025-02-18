@@ -60,7 +60,7 @@ public class DeleteServices extends UnicastRemoteObject implements DeleteService
         }
         catch(Exception e) {
             e.printStackTrace();
-            Logger.error("Failedf to delete order with order id: " + orderId);
+            Logger.error("Failed to delete order with order id: " + orderId);
         }
 
         return success;
