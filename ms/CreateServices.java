@@ -108,6 +108,8 @@ public class CreateServices extends UnicastRemoteObject implements CreateService
 
             stmt.executeUpdate(sql);
 
+            Logger.info("New order successfully created!");
+
             // clean up the environment
 
             stmt.close();
@@ -118,6 +120,7 @@ public class CreateServices extends UnicastRemoteObject implements CreateService
         } catch(Exception e) {
 
             ReturnString = e.toString();
+            Logger.error("Failed to create new order!");
         } 
         
         return(ReturnString);
