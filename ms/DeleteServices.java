@@ -53,11 +53,14 @@ public class DeleteServices extends UnicastRemoteObject implements DeleteService
             int rowsAffected = stmt.executeUpdate();
             success = (rowsAffected > 0);  
 
+            Logger.info("Successfully deleted order with order id: " + orderId);
+
             stmt.close();
             conn.close();
         }
         catch(Exception e) {
             e.printStackTrace();
+            Logger.error("Failed to delete order with order id: " + orderId);
         }
 
         return success;

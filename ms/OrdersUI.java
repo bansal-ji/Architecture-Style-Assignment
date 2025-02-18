@@ -68,6 +68,7 @@ public class OrdersUI
                 // Signup process
                 response = api.signup(username, password);
                 System.out.println(response);
+				Logger.info("New user signed up!");
                 // After signup, we typically require the user to log in.
             } 
             if (authChoice == 1) {
@@ -77,8 +78,10 @@ public class OrdersUI
                 if (token != null && !token.startsWith("Invalid") && !token.startsWith("Login failed")) {
                     System.out.println("Login successful! Your token: " + token);
                     authenticated = true;
+					Logger.info("User has logged in!");
                 } else {
                     System.out.println("Login failed. Please try again.");
+					Logger.error("Login failed for user!");
                 }
             }
         }
@@ -113,9 +116,11 @@ public class OrdersUI
 				{
 					response = api.retrieveOrders(token);
 					System.out.println(response);
+					Logger.info("Retrieved all orders: " + response);
 				} 
 				catch (Exception e) {
 					System.out.println("Request failed:: " + e);
+					Logger.error("Error retrieving all orders: " + e);
 				}
 				System.out.println("\nPress enter to continue..." );
 				c.readLine();
@@ -143,9 +148,11 @@ public class OrdersUI
 				{
 					response = api.retrieveOrders(orderid, token);
 					System.out.println(response);
+					Logger.info("Retrieved order with order id = " + orderid + ": " + response);
 				} 
 				catch (Exception e) {
 					System.out.println("Request failed:: " + e);
+					Logger.error("Failed to retrieve order with order id = " + orderid);
 				}
 				System.out.println("\nPress enter to continue..." );
 				c.readLine();
@@ -185,13 +192,16 @@ public class OrdersUI
 						System.out.println("\nCreating order...");
 						response = api.newOrder(date, first, last, address, phone, token);
 						System.out.println(response);
+						Logger.info("Created new order!");
 					} 
 					catch(Exception e) {
 						System.out.println("Request failed:: " + e);
+						Logger.error("Failed to create new order!");
 					}
 				} 
 				else {
 					System.out.println("\nOrder not created...");
+					Logger.info("User cancelled to create the order!");
 				}
 
 				System.out.println("\nPress enter to continue..." );
@@ -220,9 +230,11 @@ public class OrdersUI
 				{
 					response = api.deleteOrder(orderid);
 					System.out.println(response);
+					Logger.info("Order deleted: " + orderid);
 				} 
 				catch (Exception e) {
 					System.out.println("Request failed:: " + e);
+					Logger.error("Failed to delete order!");
 				}
 
 				System.out.println("\nPress enter to continue..." );
@@ -234,6 +246,7 @@ public class OrdersUI
 			{
 				done = true;
 				System.out.println( "\nDone...\n\n" );
+				Logger.info("User logged out!");
 			}
 			else
 			{
