@@ -159,7 +159,7 @@ exports.login = function(req, res) {
  */
 exports.tokenVerifier = function(req, res, next) {
     serviceEventBus.emit("log", "Token verification initiated", "INFO", "Auth API", req.ip);
-    console.log("Verifying reqqq");
+    console.log("Verifying token");
     let token = req.headers['x-access-token'] || req.query.token || req.body.token;
     if (!token) {
         serviceEventBus.emit("log", "Token verification failed: No token provided", "ERROR", "Auth API", req.ip);
