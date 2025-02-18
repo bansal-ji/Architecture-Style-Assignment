@@ -65,8 +65,10 @@ public class OrdersUI
             try {
                 if (authChoice == 0) {
                     // Sign up process
+					ClientLogger.info("User attempting to sign up with username: " + username);
                     response = api.signup(username, password);
                     System.out.println(response);
+					ClientLogger.info("Signup response received: " + response);
                     // After sign-up, prompt for login.
                 } else if (authChoice == 1) {
                     // Log in process
@@ -74,15 +76,19 @@ public class OrdersUI
                     // Here we assume that a valid token is returned in a straightforward manner.
                     if (token != null && !token.isEmpty() && !token.contains("Invalid") && !token.contains("failed")) {
                         System.out.println("Login successful! Your token: " + token);
+						ClientLogger.info("User " + username + " successfully logged in.");
                         authenticated = true;
                     } else {
                         System.out.println("Login failed. Please try again.");
+						ClientLogger.warn("User " + username + " failed to log in. Invalid credentials.");
                     }
                 } else {
                     System.out.println("Invalid option. Please try again.");
+					ClientLogger.warn("User entered an invalid option for authentication.");
                 }
             } catch (Exception e) {
                 System.out.println("Authentication error: " + e);
+				ClientLogger.error("Authentication error for user " + username + ": " + e.getMessage());
             }
         }
         // -------- End Authentication Loop --------
@@ -165,12 +171,12 @@ public class OrdersUI
 				{
 					response = api.retrieveOrders(orderid, token);
 					System.out.println(response);
-					ClientLogger.info("Successfully retrieved order with order id " + orderid);
+					ClientLogger.info("Successfully retrieved order with order id: " + orderid);
 
 				} catch (Exception e) {
 
 					System.out.println("Request failed:: " + e);
-					ClientLogger.error("Failed to retrieve order with order id " + orderid + ": " + e.getMessage());
+					ClientLogger.error("Failed to retrieve order with order id: " + orderid + ": " + e.getMessage());
 					
 				}
 
@@ -220,7 +226,7 @@ public class OrdersUI
 						System.out.println("\nCreating order...");
 						response = api.newOrder(date, first, last, address, phone, token);
 						System.out.println(response);
-						ClientLogger.info("Successfully created new order: " + response);
+						ClientLogger.info("Successfully created new order: ");
 
 					} catch(Exception e) {
 
