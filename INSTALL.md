@@ -453,6 +453,16 @@ mysql> describe orders;
 
 You should see the same schema as shown above for the ws_orderinfo/orders table and ws_orderinfo/users table. 
 
+## Logging
+
+##### Webservices Logging
+Web server logs can be viewed in docker, by opening ws_server files and going to the path usr/app/logs/ws_service_logs.txt
+
+Web client logs can be viewed in docker, by opening ws_client files and going to the path usr/app/logs/ws_client_logs.txt
+
+##### Microservices Logging
+Each mircoservice's logs can be viewed in the docker files of that particular service, located at the path usr/app/logs/server_application_logs.txt
+
 ## Notes on making changes
 
 Note that when you change the source code for the web-services or microservices, you will need to rebuild the containers. This can be done by using the `docker-compose ... build` command as described above.
