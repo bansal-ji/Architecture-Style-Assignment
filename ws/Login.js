@@ -23,8 +23,10 @@
 *    - express: to be used as vefrifier step.
 ******************************************************************************************************************/
 
+require("./ServiceLogger");
 var mysql = require('mysql');
 var config = require('./config/mysql.config.json');
+var serviceEventBus = require("./ServiceEventBus");
 var SECRET_KEY = process.env.SECRET_KEY || 'defaultSecret';
 
 /**
@@ -84,21 +86,26 @@ function verifyToken(token) {
 exports.signup = function(req, res) {
     let username = req.body.username;
     let password = req.body.password;
+    serviceEventBus.emit("log", `Signup attempt for username: ${username}`, "INFO", "Auth API", req.ip);
     if (!username || !password) {
+        serviceEventBus.emit("log", "Signup failed: Missing username or password", "ERROR", "Auth API", req.ip);
         return res.status(400).json({Error: true, Message: "Username and password required"});
     }
     let connection = mysql.createConnection(config);
     connection.connect(function(err) {
         if (err) {
+            serviceEventBus.emit("log", "Signup failed: Database connection error", "ERROR", "Auth API", req.ip);
             return res.status(500).json({Error: true, Message: "Database connection error"});
         }
         let query = "INSERT INTO users(username, password) VALUES (?, ?)";
         connection.query(query, [username, password], function(err, results) {
             if (err) {
                 connection.end();
+                serviceEventBus.emit("log", `Signup failed for username: ${username} - ${err}`, "ERROR", "Auth API", req.ip);
                 return res.status(500).json({Error: true, Message: "Sign-up failed: " + err});
             }
             connection.end();
+            serviceEventBus.emit("log", `Signup successful for username: ${username}`, "SUCCESS", "Auth API", req.ip);
             return res.json({Error: false, Message: "Sign-up successful"});
         });
     });
@@ -113,27 +120,33 @@ exports.signup = function(req, res) {
 exports.login = function(req, res) {
     let username = req.body.username;
     let password = req.body.password;
+    serviceEventBus.emit("log", `Login attempt for username: ${username}`, "INFO", "Auth API", req.ip);
     if (!username || !password) {
+        serviceEventBus.emit("log", "Login failed: Missing username or password", "ERROR", "Auth API", req.ip);
         return res.status(400).json({Error: true, Message: "Username and password required"});
     }
     
     let connection = mysql.createConnection(config);
     connection.connect(function(err) {
         if (err) {
+            serviceEventBus.emit("log", "Login failed: Database connection error", "ERROR", "Auth API", req.ip);
             return res.status(500).json({Error: true, Message: "Database connection error"});
         }
         let query = "SELECT * FROM users WHERE username = ? AND password = ?";
         connection.query(query, [username, password], function(err, results) {
             if (err) {
                 connection.end();
+                serviceEventBus.emit("log", "Login failed: MySQL query error", "ERROR", "Auth API", req.ip);
                 return res.status(500).json({Error: true, Message: "MySQL query error"});
             }
             if (results.length > 0) {
                 let token = generateToken(username, 3600000);
                 connection.end();
+                serviceEventBus.emit("log", `Login successful for username: ${username}. Token issued.`, "SUCCESS", "Auth API", req.ip);
                 return res.json({Error: false, Message: "Login successful", token: token});
             } else {
                 connection.end();
+                serviceEventBus.emit("log", `Login failed for username: ${username} - Invalid credentials`, "ERROR", "Auth API", req.ip);
                 return res.status(401).json({Error: true, Message: "Invalid credentials"});
             }
         });
@@ -145,14 +158,18 @@ exports.login = function(req, res) {
  * Checks for the token in the 'x-access-token' header, query string, or request body.
  */
 exports.tokenVerifier = function(req, res, next) {
-    console.log("Verifying reqqq");
+    serviceEventBus.emit("log", "Token verification initiated", "INFO", "Auth API", req.ip);
+    console.log("Verifying token");
     let token = req.headers['x-access-token'] || req.query.token || req.body.token;
     if (!token) {
+        serviceEventBus.emit("log", "Token verification failed: No token provided", "ERROR", "Auth API", req.ip);
         return res.status(403).json({Error: true, Message: "No token provided"});
     }
     if (verifyToken(token)) {
+        serviceEventBus.emit("log", "Token verified successfully", "SUCCESS", "Auth API", req.ip);
         next();
     } else {
+        serviceEventBus.emit("log", "Token verification failed: Invalid or expired token", "ERROR", "Auth API", req.ip);
         return res.status(401).json({Error: true, Message: "Failed to authenticate token"});
     }
 };

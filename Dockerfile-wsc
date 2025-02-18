@@ -2,6 +2,6 @@ from openjdk:16
 
 WORKDIR /usr/app
 
-COPY ws/OrdersUI.java ws/WSClientAPI.java ./
+COPY ws/OrdersUI.java ws/WSClientAPI.java ws/ClientLogger.java ./
 RUN javac *.java
 
